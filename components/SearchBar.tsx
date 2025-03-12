@@ -23,15 +23,17 @@ const SearchBar = () => {
   const [model,setModel] = useState('')
   const router = useRouter()
 
+
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if(manufacturer === '' && model === '') {
-      return alert('please')
+      return alert('Please enter a manufacturer or a model')
     }
 
     updateSearchParams(model.toLowerCase(), manufacturer.toLowerCase())
   }
+
 
   const updateSearchParams = (model:string, manufacturer: string) => {
     const searchParams = new URLSearchParams(window.location.search) // get the current search params 
@@ -52,6 +54,7 @@ const SearchBar = () => {
     router.push(newPathName)
   }
 
+  
   return (
     <form className='searchbar' onSubmit={handleSearch}>
       <div className='searchbar__item'>

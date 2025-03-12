@@ -8,9 +8,9 @@ export default async function Home({searchParams} : HomeProps) {
 
   const allCars = await fetchCars({
     manufacturer: searchParams.manufacturer || "",
-    year: searchParams.year || 2022,
+    year: searchParams.year || null,
     fuel: searchParams.fuel || "",
-    limit: searchParams.limit || 10,
+    limit: searchParams.limit || null,
     model: searchParams.model || "",
   });
 
