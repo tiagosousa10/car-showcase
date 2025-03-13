@@ -34,9 +34,9 @@ export interface CarProps {
 
 export interface FilterProps {
    manufacturer:string,
-   year:number | null,
+   year:number | string,
    fuel:string,
-   limit:number | null,
+   limit:number | string,
    model:string,
 }
 
@@ -54,4 +54,7 @@ export interface CustomFilterProps {
    options: OptionProps[],
 }
 
-
+export interface ShowMoreProps {
+   pageNumber: number,
+   isNext: boolean
+}

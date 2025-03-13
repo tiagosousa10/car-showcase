@@ -17,7 +17,7 @@ export async function fetchCars(filters: FilterProps) {
  );
 
    const result = await response.json() // get the data to JSON
-
+   console.log('result: ',result)
    return result; // return the cars
 
 }
