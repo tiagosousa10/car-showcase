@@ -4,16 +4,19 @@ import {useState, useEffect} from 'react'
 import { fuels, yearsOfProduction } from "../constants";
 import { CarCard, CustomFilter, Hero, SearchBar, ShowMore } from "../components";
 import { fetchCars } from "../utils";
+import Image from "next/image";
 
 export default function Home() {
   const searchParams = useSearchParams();
-  const manufacturer = searchParams.get("manufacturer") || "";
-  const model = searchParams.get("model") || "";
-  const fuel = searchParams.get("fuel") || "";
-  const year = searchParams.get("year") || "";
+  const [manufacturer, setManufacturer] = useState(searchParams.get("manufacturer") || "");
+  const [model,setModel] = useState(searchParams.get("model") || "")
+  const [year,setYear] = useState(searchParams.get("year") || "")
+  const [limit, setLimit] = useState(10);
+  const [fuel,setFuel] = useState(searchParams.get("fuel") || "")
+
   const [allCars, setAllCars] = useState([]); 
   const [loading, setLoading] = useState(false);
-  const [limit, setLimit] = useState(10);
+
 
   const getCars = async () => {
     setLoading(true);
@@ -34,7 +37,6 @@ export default function Home() {
     }
   };
 
-  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1 || !allCars;
 
 
   useEffect(() => {
@@ -52,15 +54,19 @@ export default function Home() {
         </div>
 
         <div className='home__filters'>
-          <SearchBar />
+          <SearchBar
+            setManufacturer={setManufacturer}
+            setModel={setModel}
+            setLimit={limit}
+          />
 
           <div className='home__filter-container'>
-            <CustomFilter title='fuel' options={fuels} />
-            <CustomFilter title='year' options={yearsOfProduction} />
+            <CustomFilter title='fuel' options={fuels} setFilter={setFuel} />
+            <CustomFilter title='year' options={yearsOfProduction} setFilter={setYear} />
           </div>
         </div>
 
-        {!isDataEmpty ? (
+        {allCars.length > 0  ? (
           <section>
             <div className='home__cars-wrapper'>
               {allCars?.map((car) => (
@@ -68,9 +74,22 @@ export default function Home() {
               ))}
             </div>
 
+            {loading && (
+              <div className="mt-16 w-full flex-center">
+                <Image
+                  src="/loader.svg"
+                  alt="loader"
+                  width={50}
+                  height={50}
+                  className="object-contain"
+                />
+              </div>
+            )}
+
             <ShowMore
-              pageNumber={(limit || 10) / 10}
-              isNext={(limit || 10) > allCars.length}
+              pageNumber={limit  / 10}
+              isNext={limit > allCars.length}
+              setLimit={setLimit}
             />
           </section>
         ) : (
