@@ -1,26 +1,42 @@
 import { CarProps, FilterProps } from "@types";
 
 export async function fetchCars(filters: FilterProps) {
-   const {manufacturer, year, model, limit, fuel} = filters;
+   const { manufacturer, year, model, limit, fuel } = filters;
 
    const headers = {
       'x-rapidapi-key': '180af2010cmshea5ba1a8a19c079p12c106jsn3c408d224c2c',
       'x-rapidapi-host': 'cars-by-api-ninjas.p.rapidapi.com'
+   };
+
+   // Criar URL base
+   const url = new URL("https://cars-by-api-ninjas.p.rapidapi.com/v1/cars");
+
+   // Adicionar parâmetros apenas se forem fornecidos
+   if (manufacturer) url.searchParams.append("make", manufacturer);
+   if (year) url.searchParams.append("year", year.toString());
+   if (model) url.searchParams.append("model", model);
+   if (fuel) url.searchParams.append("fuel_type", fuel);
+
+   // Removendo o parâmetro `limit` porque ele é apenas para usuários premium
+   console.log("Fetching cars with URL:", url.toString());
+
+   try {
+      const response = await fetch(url.toString(), { headers });
+
+      if (!response.ok) {
+         throw new Error(`Erro ao buscar carros: ${response.statusText}`);
+      }
+
+      const result = await response.json(); // Converte a resposta em JSON
+      console.log("API response:", result);
+
+      return result; // Retorna os carros
+   } catch (error) {
+      console.error("Erro ao buscar carros:", error);
+      return []; // Retorna uma lista vazia em caso de erro
    }
-
-  // Set the required headers for the API request
-  const response = await fetch(
-      `https://cars-by-api-ninjas.p.rapidapi.com/v1/cars?make=${manufacturer}&year=${year}&model=${model}&limit=${limit}&fuel_type=${fuel}`,
-   {
-     headers: headers,
-   }
- );
-
-   const result = await response.json() // get the data to JSON
-   console.log('result: ',result)
-   return result; // return the cars
-
 }
+
 
 export const calculateCarRent = (city_mpg: number, year: number) => {
    const basePricePerDay = 50; // Base rental price per day in dollars
@@ -54,12 +70,13 @@ export const generateCarImageUrl = (car: CarProps, angle?: string) => {
    return `${url}`;
 } 
 
-export const updateSearchParams = (type:string, value:string) => {
-
-   const searchParams = new URLSearchParams(window.location.search) // get the current search params 
-   searchParams.set(type, value)  // set the model to the search params
-
-   const newPathName = `${window.location.pathname}?${searchParams.toString()}` 
-
-   return newPathName;
-}
+export const updateSearchParams = (key: string, value: string) => {
+   const searchParams = new URLSearchParams(window.location.search);
+   if (value) {
+     searchParams.set(key, value);
+   } else {
+     searchParams.delete(key);
+   }
+   return `${window.location.pathname}?${searchParams.toString()}`;
+ };
+ 
